@@ -7,5 +7,5 @@ import retrofit2.http.Query
 
 interface WeatherService {
     @GET("/data/2.5/weather")
-    suspend fun fetchWeather(@Query("lat") lat: String, @Query("lon") lon: String): Call<WeatherResponse>
+     fun fetchWeather(@Query("lat") lat: String, @Query("lon") lon: String): Call<WeatherResponse>
 }

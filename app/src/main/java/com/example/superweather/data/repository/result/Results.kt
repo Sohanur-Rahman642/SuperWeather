@@ -1,4 +1,4 @@
-package com.example.superweather.data.repository
+package com.example.superweather.data.repository.result
 
 import retrofit2.Response
 
