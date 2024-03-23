@@ -34,11 +34,5 @@ class HomeViewModel(latitude: String, longitude: String) :ViewModel() {
     }
 
 
-    fun fetchCurrentWeatherData(lat: String, lon: String) {
-        weatherData = liveDataBlockScope {
-            weatherRepository.loadWeatherData(lat, lon) {it}
-        }
-
-    }
 
 }

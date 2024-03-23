@@ -13,6 +13,7 @@ import com.example.superweather.data.model.weather.Weather
 import com.example.superweather.data.repository.sharedPref.SharedPrefRepository
 import com.example.superweather.databinding.FragmentHomeBinding
 import com.example.superweather.ui.base.BaseFragment
+import com.example.superweather.ui.main.ConnectivityViewModel
 import com.example.superweather.util.extension.NavigationFragmentUtil
 import com.google.android.gms.location.FusedLocationProviderClient
 import com.google.android.gms.location.LocationServices
@@ -33,6 +34,7 @@ class HomeFragment : BaseFragment() {
     private lateinit var viewDataBinding: FragmentHomeBinding
 
     private lateinit var fusedLocationClient: FusedLocationProviderClient
+    
 
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
@@ -49,6 +51,7 @@ class HomeFragment : BaseFragment() {
             this,
             HomeViewModelFactory(latLongPair.first, latLongPair.second)
         )[HomeViewModel::class.java]
+
 
        viewDataBinding =
            DataBindingUtil.inflate(inflater, R.layout.fragment_home, container, false)
@@ -70,7 +73,7 @@ class HomeFragment : BaseFragment() {
 
     override fun setupViewModelObservers() {
         super.setupViewModelObservers()
-        viewModel.weatherData.observe(this) { it ->
+        viewModel.weatherData?.observe(this) { it ->
             if(it != null){
                 viewDataBinding.weather = it
                 setWeatherIcon(it.weather.first())

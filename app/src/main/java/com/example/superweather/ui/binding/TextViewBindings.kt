@@ -2,7 +2,7 @@ package com.example.superweather.ui.binding
 
 import android.widget.TextView
 import androidx.databinding.BindingAdapter
-import com.example.superweather.util.getCurrentDate
+import com.example.superweather.util.date.getCurrentDate
 import java.text.SimpleDateFormat
 import java.util.Date
 import java.util.TimeZone
