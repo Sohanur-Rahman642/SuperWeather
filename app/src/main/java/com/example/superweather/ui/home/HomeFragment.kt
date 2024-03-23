@@ -1,19 +1,16 @@
 package com.example.superweather.ui.home
 
-import android.Manifest
-import android.content.pm.PackageManager
 import android.location.Geocoder
-import android.os.Build
 import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
-import androidx.core.app.ActivityCompat
 import androidx.databinding.DataBindingUtil
-import androidx.databinding.ViewDataBinding
-import androidx.fragment.app.viewModels
+import androidx.lifecycle.ViewModelProvider
 import com.example.superweather.R
+import com.example.superweather.constants.Constants
 import com.example.superweather.data.model.weather.Weather
+import com.example.superweather.data.repository.sharedPref.SharedPrefRepository
 import com.example.superweather.databinding.FragmentHomeBinding
 import com.example.superweather.ui.base.BaseFragment
 import com.example.superweather.util.extension.NavigationFragmentUtil
@@ -27,19 +24,32 @@ import java.util.Locale
 
 
 class HomeFragment : BaseFragment() {
-   private lateinit var lat : String
-   private lateinit var lon: String
-   private val viewModel: HomeViewModel by viewModels()
-   private lateinit var viewDataBinding: FragmentHomeBinding
+
+    private lateinit var sharedPrefRepository: SharedPrefRepository
+
+    private lateinit var latLongPair: Pair<String, String>
+
+    private lateinit var viewModel: HomeViewModel
+    private lateinit var viewDataBinding: FragmentHomeBinding
 
     private lateinit var fusedLocationClient: FusedLocationProviderClient
-
 
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
         savedInstanceState: Bundle?
     ): View? {
         // Inflate the layout for this fragment
+        sharedPrefRepository = SharedPrefRepository(this.requireContext())
+        fusedLocationClient = LocationServices.getFusedLocationProviderClient(requireContext())
+
+        latLongPair =  sharedPrefRepository
+            .retrievePair(Constants.SHARED_PREF_LAT_LONG_PAIR, Pair(Constants.DUMMY_LATITUDE, Constants.DUMMY_LONGITUDE))
+
+        viewModel = ViewModelProvider(
+            this,
+            HomeViewModelFactory(latLongPair.first, latLongPair.second)
+        )[HomeViewModel::class.java]
+
        viewDataBinding =
            DataBindingUtil.inflate(inflater, R.layout.fragment_home, container, false)
         viewDataBinding.contentShimmerLayout.startShimmer()
@@ -48,9 +58,7 @@ class HomeFragment : BaseFragment() {
         viewDataBinding.viewmodel= viewModel
         viewDataBinding.lifecycleOwner = this@HomeFragment.viewLifecycleOwner
 
-        fusedLocationClient = LocationServices.getFusedLocationProviderClient(requireContext())
-
-        getLastLocation()
+        getAddress(latLongPair.first.toDouble(), latLongPair.second.toDouble())
 
         return viewDataBinding.root
     }
@@ -58,31 +66,6 @@ class HomeFragment : BaseFragment() {
     private fun navigateToSearch() {
         val action = HomeFragmentDirections.actionHomeFragmentToSearchFragment()
         NavigationFragmentUtil().navigateToFragmentWithAction(requireView(), action)
-    }
-
-    private fun getLastLocation() {
-        if (ActivityCompat.checkSelfPermission(
-                requireContext(),
-                Manifest.permission.ACCESS_FINE_LOCATION
-            ) != PackageManager.PERMISSION_GRANTED && ActivityCompat.checkSelfPermission(
-                requireActivity(),
-                Manifest.permission.ACCESS_COARSE_LOCATION
-            ) != PackageManager.PERMISSION_GRANTED
-        ) {
-            ActivityCompat.requestPermissions(requireActivity(),
-                arrayOf(android.Manifest.permission.ACCESS_FINE_LOCATION), REQUEST_LOCATION_PERMISSION)
-        }
-        fusedLocationClient.lastLocation
-            .addOnSuccessListener { location ->
-                // Got last known location. In some rare situations this can be null.
-                if (location != null) {
-                    // Handle the location
-                    getAddress(location.latitude, location.longitude)
-                    val lat = location.latitude.toString().trim()
-                    val lon = location.longitude.toString().trim()
-                    viewModel.fetchCurrentWeatherData(lat, lon)
-                }
-            }
     }
 
     override fun setupViewModelObservers() {
@@ -136,8 +119,5 @@ class HomeFragment : BaseFragment() {
         }
     }
 
-    companion object {
-        private const val REQUEST_LOCATION_PERMISSION = 1
-    }
 
 }
