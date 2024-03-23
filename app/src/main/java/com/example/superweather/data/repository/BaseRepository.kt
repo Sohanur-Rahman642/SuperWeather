@@ -18,7 +18,6 @@ abstract class BaseRepository {
         withContext(Dispatchers.IO){
             call().request { response ->
                 response.onSuccess { data?.let {
-                    println("weather in repo $it")
                     result.postValue(it)}
                 }
                 response.onFailure { message?.let { errorText(it) } }
