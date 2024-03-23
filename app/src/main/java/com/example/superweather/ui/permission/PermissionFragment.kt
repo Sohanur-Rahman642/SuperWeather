@@ -16,6 +16,7 @@ import com.example.superweather.databinding.FragmentPermissionBinding
 import com.example.superweather.databinding.FragmentSearchBinding
 import com.example.superweather.ui.base.BaseFragment
 import com.example.superweather.util.extension.NavigationFragmentUtil
+import com.example.superweather.util.location.LocationUtils
 import com.google.android.gms.location.FusedLocationProviderClient
 import com.google.android.gms.location.LocationServices
 
@@ -37,39 +38,13 @@ class PermissionFragment : BaseFragment() {
 
         sharedPrefRepository = SharedPrefRepository(this.requireContext())
 
-        viewDataBinding.enableLocation.setOnClickListener{getLastLocation()}
+        viewDataBinding.enableLocation.setOnClickListener{
+            LocationUtils.getLastKnownLocation(this, fusedLocationClient, sharedPrefRepository)
+        }
 
         return viewDataBinding.root
     }
-
-
-
-    private fun getLastLocation() {
-        if (ActivityCompat.checkSelfPermission(
-                requireContext(),
-                Manifest.permission.ACCESS_FINE_LOCATION
-            ) != PackageManager.PERMISSION_GRANTED && ActivityCompat.checkSelfPermission(
-                requireActivity(),
-                Manifest.permission.ACCESS_COARSE_LOCATION
-            ) != PackageManager.PERMISSION_GRANTED
-        ) {
-            ActivityCompat.requestPermissions(requireActivity(),
-                arrayOf(android.Manifest.permission.ACCESS_FINE_LOCATION), Constants.REQUEST_LOCATION_PERMISSION)
-        }
-        fusedLocationClient.lastLocation
-            .addOnSuccessListener { location ->
-                // Got last known location. In some rare situations this can be null.
-                if (location != null) {
-                    // Handle the location
-                    val lat = location.latitude.toString().trim()
-                    val lon = location.longitude.toString().trim()
-                    sharedPrefRepository.savePair(Constants.SHARED_PREF_LAT_LONG_PAIR, Pair(lat, lon))
-                    navigateToHome()
-                }else{
-                    Toast.makeText(requireContext(), "Location not found",Toast.LENGTH_LONG).show()
-                }
-            }
-    }
+    
 
     private fun navigateToHome() {
         val action = PermissionFragmentDirections.actionPermissionFragmentToHomeFragment()

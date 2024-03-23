@@ -1,19 +1,9 @@
 package com.example.superweather.ui.binding
 
-import android.os.Build
 import android.widget.TextView
-import androidx.annotation.RequiresApi
 import androidx.databinding.BindingAdapter
-import com.example.superweather.data.model.weather.Weather
-import com.example.superweather.data.model.weather.WeatherResponse
-import com.example.superweather.ui.home.HomeViewModel
-import com.example.superweather.util.extension.getCurrentDate
-import java.sql.Timestamp
+import com.example.superweather.util.getCurrentDate
 import java.text.SimpleDateFormat
-import java.time.Instant
-import java.time.LocalDateTime
-import java.time.ZoneId
-import java.time.format.DateTimeFormatter
 import java.util.Date
 import java.util.TimeZone
 

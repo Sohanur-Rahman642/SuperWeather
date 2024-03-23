@@ -1,4 +1,4 @@
-package com.example.superweather.util.extension
+package com.example.superweather.util
 
 import java.text.SimpleDateFormat
 import java.util.Date

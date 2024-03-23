@@ -93,8 +93,7 @@ class HomeFragment : BaseFragment() {
             if (addresses != null) {
                 if (addresses.isNotEmpty()) {
                     val address = addresses[0]
-                   // val addressText = "${address.getAddressLine(0)}, ${address.locality}, ${address.countryName}"
-                    viewDataBinding.cityName.text = address?.locality
+                    viewDataBinding.cityName.text = address?.locality?:address?.subAdminArea
                     viewDataBinding.countryName.text = address?.countryName
 
                 }
