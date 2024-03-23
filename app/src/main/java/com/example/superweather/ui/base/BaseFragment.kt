@@ -1,13 +1,7 @@
 package com.example.superweather.ui.base
 
-
-import android.Manifest
-import android.content.pm.PackageManager
 import android.os.Bundle
-import android.widget.Toast
-import androidx.core.app.ActivityCompat
 import androidx.fragment.app.Fragment
-import com.example.superweather.constants.Constants
 import com.example.superweather.data.repository.sharedPref.SharedPrefRepository
 import com.example.superweather.util.location.LocationUtils
 import com.google.android.gms.location.FusedLocationProviderClient
